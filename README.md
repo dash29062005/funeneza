@@ -1,2 +1,2 @@
-# funeza
+# funeneza
 game zone website
