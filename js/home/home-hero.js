@@ -46,11 +46,31 @@ function buildSlide(slide, index) {
   div.dataset.index = index;
 
   if (slide.type === "image") {
+    const picture = document.createElement("picture");
+
+    // 1. If a mobile asset path exists in your JSON, add the native mobile source rule
+    if (slide.src && slide.src.mobile) {
+      const source = document.createElement("source");
+      source.media = "(max-width: 767px)";
+      source.srcset = HERO_MEDIA_PATH + slide.src.mobile;
+      picture.appendChild(source);
+    }
+
+    // 2. Create the standard img element as the desktop fallback
     const img = document.createElement("img");
-    img.src = getMediaSrc(slide.src);
+    
+    // Check if slide.src is an object with a desktop property, otherwise fallback to slide.src string
+    const desktopSrc = (slide.src && slide.src.desktop) ? slide.src.desktop : slide.src;
+    img.src = HERO_MEDIA_PATH + desktopSrc;
     img.alt = slide.alt || "";
+    
+    // Since slide 0 is hardcoded in HTML, all these dynamic slides are in the background and can safely be lazy-loaded
     img.loading = index === 0 ? "eager" : "lazy";
-    div.appendChild(img);
+    
+    // Assemble the elements
+    picture.appendChild(img);
+    div.appendChild(picture);
+
   } else if (slide.type === "video") {
     const video = document.createElement("video");
     video.src = getMediaSrc(slide.src);
@@ -65,7 +85,6 @@ function buildSlide(slide, index) {
 
   return div;
 }
-
 /* --- Build dot indicators --- */
 function buildDots(total) {
   const dotsEl = document.getElementById("hero-dots");
@@ -183,21 +202,27 @@ function initArrows() {
 }
 
 /* --- Render hero slides --- */
+/* --- Render hero slides --- */
 function renderHero(slides) {
   const track = document.getElementById("hero-track");
   const heroEl = document.querySelector(".home-hero");
   if (!track || !heroEl) return;
 
-  track.innerHTML = "";
+  // REMOVED: track.innerHTML = ""; 
+  // We no longer clear this container so we don't wipe out our hardcoded Slide 0!
+
   clearTimeout(autoplayTimer);
   currentIndex = 0;
 
   slides.forEach((slide, i) => {
+    // Skip creating slide 0 because it's already alive in index.html for instant performance loading
+    if (i === 0) return;
+
     const el = buildSlide(slide, i);
-    if (i === 0) el.classList.add("is-active");
     track.appendChild(el);
   });
 
+  // If your first slide ever switches to a video, this safely triggers playback natively
   const firstVideo = track.querySelector(".hero-slide.is-active video");
   if (firstVideo) {
     const playPromise = firstVideo.play();
@@ -210,7 +235,6 @@ function renderHero(slides) {
   initSwipe(heroEl);
   startAutoplay();
 }
-
 /* --- Main hero init --- */
 export function initHero() {
   fetch(HERO_JSON_PATH)
@@ -224,19 +248,3 @@ export function initHero() {
     });
 }
 
-/* --- Handle resize → rebuild only when breakpoint mode changes --- */
-export function initHeroResizeHandler() {
-  if (resizeBound) return;
-
-  let lastMobile = isMobile();
-
-  window.addEventListener("resize", () => {
-    const nowMobile = isMobile();
-    if (nowMobile === lastMobile) return;
-
-    lastMobile = nowMobile;
-    initHero();
-  });
-
-  resizeBound = true;
-}

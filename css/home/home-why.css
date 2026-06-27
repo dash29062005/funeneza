@@ -25,7 +25,7 @@
 }
 
 .home-why .container {
-  width: min(100% - 2rem, 1280px);
+  width: min(100% - 2rem, 1320px);
   margin: 0 auto;
 }
 
@@ -66,8 +66,11 @@
 .home-why .section-title {
   margin: 0;
   font-family: "Luckiest Guy", cursive;
-  text-transform: uppercase;
+  /* Make the text slightly punchier and scale smoother */
+  font-size: clamp(2.5rem, 5vw, 4rem); 
+  line-height: 1;
   letter-spacing: 0.02em;
+  color: var(--text-base);
 }
 
 /* Top line */
@@ -134,13 +137,15 @@
   justify-content: center;
 }
 
+
 .why-header-logo img {
-  width: min(100%, 300px);
+  display: block;
+  /* Replace the hard 280px with a fluid clamp so it grows WITH the text */
+  width: 60%;
+  align-items: center; 
   height: auto;
   object-fit: contain;
 }
-
-
 /* =========================================================
    7. WHY GRID
    8 text feature cards
@@ -239,7 +244,7 @@
   }
 
   .why-header-logo img {
-    width: min(100%, 210px);
+    width: 80%
   }
 }
 
@@ -251,31 +256,34 @@
 
 @media (max-width: 767.98px) {
   .home-why {
-    padding: 4rem 0;
+    padding: 2rem 0 0;
   }
 
   .home-why .container {
     width: min(100% - 1.25rem, 640px);
-  }
+  } 
 
   .home-why .section-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1.25rem;
+    gap: 1rem;
     margin-bottom: 2rem;
   }
 
   .why-header-text {
     margin-left: 0;
-    text-align: left;
+    text-align: center;
   }
 
   .section-kicker {
-    font-size: 0.68rem;
+    font-size: 2.5rem;
+    padding-bottom:1rem ;
+    
   }
 
   .home-why .section-title {
-    font-size: clamp(1.9rem, 10vw, 3rem);
+    font-size: 2.5rem;
+    
     -webkit-text-stroke: 1.5px #ffd93d;
     text-shadow:
       0 2px 0 #1f49ff,
@@ -283,7 +291,8 @@
   }
 
   .why-header-logo img {
-    width: min(72vw, 220px);
+    width: 80%;
+    align-items: center;
   }
 
   .why-grid {

@@ -10,7 +10,12 @@
   <link rel="stylesheet" href="./css/main.css" />
   <link rel="stylesheet" href="./css/navbar.css" />
   <link rel="stylesheet" href="./css/footer.css" />
-  <link rel="stylesheet" href="./css/home/home.css" />
+  <link rel="stylesheet" href="./css/home/home-hero.css" />
+  <link rel="stylesheet" href="./css/home/home-zones.css" />
+  <link rel="stylesheet" href="./css/home/home-why.css" />
+  <link rel="stylesheet" href="./css/home/home-highlights.css" />
+  <link rel="stylesheet" href="./css/home/home-celebrate.css" />
+  <link rel="stylesheet" href="./css/pacman.css" />
 </head>
 <body class="">
   
@@ -23,16 +28,21 @@
        JS renders from home-hero.json
   ===================== -->
   <section class="home-hero" id="home-hero">
-    <div class="home-hero-track" id="hero-track"></div>
-    <div class="home-hero-overlay">
-      <div class="container">
-        <div class="home-hero-content" id="hero-content">
-          <!-- JS injects title, subtitle, CTA here -->
-        </div>
+    <div class="home-hero-track" id="hero-track">
+      <div class="hero-slide is-active" data-index="0">
+        <picture>
+          <source media="(max-width: 767px)" srcset="./images/hero/10.webp" />
+          
+          <img 
+            src="./images/hero/15.webp" 
+            alt="Welcome to Funenza Game Zone" 
+            loading="lazy"
+          />
+        </picture>
       </div>
     </div>
-    <button class="hero-arrow hero-arrow--prev" id="hero-prev" aria-label="Previous slide">&#8249;</button>
-    <button class="hero-arrow hero-arrow--next" id="hero-next" aria-label="Next slide">&#8250;</button>
+    <button class="hero-arrow hero-arrow--prev" id="hero-prev" aria-label="Previous slide"></button>
+    <button class="hero-arrow hero-arrow--next" id="hero-next" aria-label="Next slide"></button>
     <div class="hero-dots" id="hero-dots"></div>
   </section>
 
@@ -51,7 +61,7 @@
       
       <article class="zone-card" data-slug="arcade">
         <div class="zone-card-media">
-          <img src="./images/zones/arcade.webp" alt="Arcade" fetchpriority="high" />
+          <img src="./images/zones/arcade.webp" alt="Arcade" loading="lazy" />
         </div>
         <div class="zone-card-body">
           <h3 class="zone-card-title">Arcade</h3>

@@ -2,7 +2,8 @@
    FUNENZA MAIN CSS
    Global reset + base styles
 ========================= */
-
+/* { outline: 1px solid red !important; }
+*/
 :root {
   --bg-main: linear-gradient(180deg, #000000 50%, #191C4A 100%);
   --bg-surface: #0d143f;

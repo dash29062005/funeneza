@@ -1,4 +1,5 @@
-let hasSavedSnapshotThisSession = true; // <-- Add this safeguard flag
+let hasSavedSnapshotThisSession = true; // <-- safeguard flag
+
 const HIGHLIGHTS_JSON_PATH = "./data/home-highlights.json";
 const HIGHLIGHTS_IMAGE_PATH = "./images/gallery/";
 
@@ -12,8 +13,9 @@ const HIGHLIGHTS_LAYOUT = {
 
   randomize: true,
   showText: false,
-  debug: false
+  debug: false,
 };
+
 let highlightsResizeTimer = null;
 let highlightsCachedData = null;
 
@@ -56,9 +58,11 @@ function getOrientation(item) {
   if (item?.orientation === "portrait" || item?.orientation === "landscape") {
     return item.orientation;
   }
+
   const width = Number(item?.width) || 0;
   const height = Number(item?.height) || 0;
   if (!width || !height) return "landscape";
+
   return width / height < 1 ? "portrait" : "landscape";
 }
 
@@ -79,7 +83,7 @@ function normalizeHighlightItem(item, index) {
     width,
     height,
     ratio: width / height,
-    orientation
+    orientation,
   };
 }
 
@@ -98,26 +102,29 @@ function selectHighlightItems(items, config) {
     .map((item, index) => normalizeHighlightItem(item, index));
 
   const ordered = config.randomize ? shuffleArray(normalized) : [...normalized];
-  
+
   const portraits = ordered.filter((item) => item.orientation === "portrait");
   const landscapes = ordered.filter((item) => item.orientation !== "portrait");
-  
+
   const targetCount = clamp(ordered.length, config.minItems, config.maxItems);
 
   // RULE 1: Maximum 3 portrait cards
   const allowedPortraitCount = Math.min(portraits.length, 3);
   const chosenPortraits = portraits.slice(0, allowedPortraitCount);
-  
+
   // Fill the remaining quota with landscape cards
   const neededLandscapesCount = targetCount - chosenPortraits.length;
-  const chosenLandscapes = landscapes.slice(0, Math.min(landscapes.length, neededLandscapesCount));
+  const chosenLandscapes = landscapes.slice(
+    0,
+    Math.min(landscapes.length, neededLandscapesCount)
+  );
 
   const selected = [];
   let pIdx = 0;
   let lIdx = 0;
-  
-  // CHANGED: Set to 0 so landscape cards are forced to display first before any portraits
-  let landscapesSinceLastPortrait = 0; 
+
+  // CHANGED: landscape cards forced to display first before any portraits
+  let landscapesSinceLastPortrait = 0;
 
   // RULE 3: Interleave cards to ensure at least 2 landscapes exist between any two portraits
   while (pIdx < chosenPortraits.length || lIdx < chosenLandscapes.length) {
@@ -130,7 +137,7 @@ function selectHighlightItems(items, config) {
       lIdx++;
       landscapesSinceLastPortrait++;
     } else {
-      // Discard extra portraits if they break Rule 3 sequence rules due to landscape shortage
+      // Discard extra portraits if they break Rule 3
       break;
     }
   }
@@ -139,6 +146,7 @@ function selectHighlightItems(items, config) {
   if (selected.length < config.minItems) {
     return ordered.slice(0, Math.min(ordered.length, config.maxItems));
   }
+
   return selected;
 }
 
@@ -152,7 +160,7 @@ function packCardsPacman(items, containerWidth, config) {
 
   // Base card sizes
   const landscape = { w: 14, h: 10 };
-  const portrait = { w: 14 , h: 20 };
+  const portrait = { w: 14, h: 20 };
 
   let cols = Math.floor(containerWidth / dotSize);
   // Ensure minimum width for at least one portrait + 2 corridors
@@ -191,7 +199,7 @@ function packCardsPacman(items, containerWidth, config) {
     return true;
   }
 
-  // Assign base dimensions (isFeatured sizing logic safely removed)
+  // Assign base dimensions
   const processedItems = items.map((item) => {
     let w = landscape.w;
     let h = landscape.h;
@@ -200,10 +208,10 @@ function packCardsPacman(items, containerWidth, config) {
       w = portrait.w;
       h = portrait.h;
     }
-    
+
     // Fallback for very small screens
     if (w > W_grid) w = W_grid;
-    
+
     return { ...item, gridW: w, gridH: h };
   });
 
@@ -214,16 +222,15 @@ function packCardsPacman(items, containerWidth, config) {
 
     let placed = false;
     let r = 0;
-    
+
     while (!placed) {
       for (let c = 0; c <= W_grid - w; c++) {
         if (isFree(c, r, w, h)) {
-          
-          // RULE 4: Reject placement if another portrait already claims this 12-dot band
+          // RULE 4: Reject placement if another portrait already claims this band
           if (item.orientation === "portrait") {
             const band = getPortraitBand(r);
             if (portraitBands.has(band)) {
-              continue; 
+              continue;
             }
           }
 
@@ -232,19 +239,19 @@ function packCardsPacman(items, containerWidth, config) {
             while (max_w < W_grid && isFree(c, r, max_w + 1, h)) {
               max_w++;
             }
-            
+
             // Fill awkward gaps
             if (max_w - w > 0 && max_w - w < portrait.w) {
               w = max_w;
             }
-            
+
             // Complete rows flush to the right edge
             if (c + max_w === W_grid && max_w - w > 0 && max_w - w < landscape.w) {
               w = max_w;
             }
           }
 
-          // RULE 4: Successfully placed portrait claims and locks this vertical level band
+          // RULE 4: Portrait claims this vertical band
           if (item.orientation === "portrait") {
             portraitBands.add(getPortraitBand(r));
           }
@@ -259,7 +266,7 @@ function packCardsPacman(items, containerWidth, config) {
             gridCol: c,
             gridRow: r,
             gridW: w,
-            gridH: h
+            gridH: h,
           });
           placed = true;
           break;
@@ -270,96 +277,130 @@ function packCardsPacman(items, containerWidth, config) {
   });
 
   // Pass 2: Vertical expansion to eliminate awkward bottom gaps
-  const bottomR = layoutItems.length > 0 ? Math.max(...layoutItems.map(i => i.gridRow + i.gridH)) : 0;
-  
-  layoutItems.forEach(item => {
+  const bottomR =
+    layoutItems.length > 0
+      ? Math.max(...layoutItems.map((i) => i.gridRow + i.gridH))
+      : 0;
+
+  layoutItems.forEach((item) => {
     if (item.orientation !== "portrait") {
       let max_h = item.gridH;
       let canExpand = true;
-      
+
       while (item.gridRow + max_h < bottomR && canExpand) {
         let checkR = item.gridRow + max_h;
         for (let c = item.gridCol; c < item.gridCol + item.gridW; c++) {
-           if (grid[checkR] && grid[checkR][c]) canExpand = false;
+          if (grid[checkR] && grid[checkR][c]) canExpand = false;
         }
         if (canExpand) {
-           let corridorR = checkR + corridor;
-           for (let c = Math.max(0, item.gridCol - corridor); c <= item.gridCol + item.gridW; c++) {
-             if (grid[corridorR] && grid[corridorR][c]) canExpand = false;
-           }
+          let corridorR = checkR + corridor;
+          for (
+            let c = Math.max(0, item.gridCol - corridor);
+            c <= item.gridCol + item.gridW;
+            c++
+          ) {
+            if (grid[corridorR] && grid[corridorR][c]) canExpand = false;
+          }
         }
         if (canExpand) {
           max_h++;
         }
       }
-      
-      // If expansion gap is small enough, stretch to fill it
+
+      // Stretch to fill small gaps
       if (max_h - item.gridH > 0 && max_h - item.gridH <= landscape.h + corridor) {
-         item.gridH = max_h;
-         item.height = max_h * dotSize;
-         markUsed(item.gridCol, item.gridRow, item.gridW, item.gridH);
+        item.gridH = max_h;
+        item.height = max_h * dotSize;
+        markUsed(item.gridCol, item.gridRow, item.gridW, item.gridH);
       }
     }
   });
 
-  const rows = layoutItems.length > 0
-    ? Math.max(...layoutItems.map((item) => item.gridRow + item.gridH)) + 2
-    : 0;
+  const rows =
+    layoutItems.length > 0
+      ? Math.max(...layoutItems.map((item) => item.gridRow + item.gridH)) + 2
+      : 0;
 
   layoutItems.grid = grid;
   layoutItems.dotSize = dotSize;
   layoutItems.corridor = corridor;
   layoutItems.cols = cols;
   layoutItems.rows = rows;
-  window._highlightsLayoutItems = layoutItems; 
+
+  window._highlightsLayoutItems = layoutItems;
   return layoutItems;
 }
 
 function getPackedHeight(layoutItems) {
-  return layoutItems.reduce((max, item) => Math.max(max, item.y + item.height), 0);
+  return layoutItems.reduce(
+    (max, item) => Math.max(max, item.y + item.height),
+    0
+  );
 }
 
 function estimateEmptySpace(layoutItems, containerWidth, packedHeight) {
-  const usedArea = layoutItems.reduce((sum, item) => sum + item.width * item.height, 0);
+  const usedArea = layoutItems.reduce(
+    (sum, item) => sum + item.width * item.height,
+    0
+  );
   const totalArea = containerWidth * packedHeight;
   if (!totalArea) return 0;
   return Math.max(0, 1 - usedArea / totalArea);
 }
 
-function buildHighlightCard(item, config) {
+// THE FIX: Added 'index' as the second parameter
+function buildHighlightCard(item, index, config) {
   const style = [
     "position:absolute",
     `left:${item.x}px`,
     `top:${item.y}px`,
     `width:${item.width}px`,
-    `height:${item.height}px`
+    `height:${item.height}px`,
   ].join(";");
 
   const classes = [
     "highlight-card",
-    item.orientation === "portrait" ? "is-portrait" : "is-landscape"
+    item.orientation === "portrait" ? "is-portrait" : "is-landscape",
   ].join(" ");
 
   const debugLabel = config.debug
-    ? `<span style="position:absolute;top:8px;left:8px;z-index:4;padding:2px 6px;border-radius:999px;background:rgba(0,0,0,.7);color:#fff;font:600 11px/1 sans-serif;">${escapeHtml(item.id)}</span>`
+    ? `<span style="position:absolute;top:8px;left:8px;z-index:4;padding:2px 6px;border-radius:999px;background:rgba(0,0,0,.7);color:#fff;font:600 11px/1 sans-serif;">${escapeHtml(
+        item.id
+      )}</span>`
     : "";
 
-  const body = config.showText && (item.title || item.subtitle)
-    ? `
-      <div class="highlight-card-body">
-        ${item.title ? `<h3 class="highlight-card-title">${escapeHtml(item.title)}</h3>` : ""}
-        ${item.subtitle ? `<p class="highlight-card-subtitle">${escapeHtml(item.subtitle)}</p>` : ""}
-      </div>
-    `
-    : "";
+  const body =
+    config.showText && (item.title || item.subtitle)
+      ? `
+        <div class="highlight-card-body">
+          ${
+            item.title
+              ? `<h3 class="highlight-card-title">${escapeHtml(
+                  item.title
+                )}</h3>`
+              : ""
+          }
+          ${
+            item.subtitle
+              ? `<p class="highlight-card-subtitle">${escapeHtml(
+                  item.subtitle
+                )}</p>`
+              : ""
+          }
+        </div>
+      `
+      : "";
 
   return `
-    <article class="${classes}" style="${style}" ${config.debug ? `data-id="${escapeHtml(item.id)}"` : ""}>
+    <article class="${classes}" style="${style}" ${
+    config.debug ? `data-id="${escapeHtml(item.id)}"` : ""
+  }>
       <div class="highlight-card-media" style="position:absolute;inset:0;min-height:0;">
         <img
           src="${item.imageSrc}"
           alt="${escapeHtml(item.alt)}"
-          loading="lazy"
+          loading="${index < 4 ? 'eager' : 'lazy'}"
+          fetchpriority="${index < 2 ? 'high' : 'auto'}"
           decoding="async"
           width="${item.width}"
           height="${item.height}"
@@ -374,12 +415,12 @@ function buildHighlightCard(item, config) {
 
 function renderHighlightCards(layoutItems, grid, config) {
   const dotSize = 24;
-  const packedHeight = Math.ceil(getPackedHeight(layoutItems)) + dotSize; 
-  
+  const packedHeight = Math.ceil(getPackedHeight(layoutItems)) + dotSize;
+
   grid.style.position = "relative";
   grid.style.height = `${packedHeight}px`;
   grid.style.gap = "0px";
-  grid.innerHTML = layoutItems.map((item) => buildHighlightCard(item, config)).join("");
+  grid.innerHTML = layoutItems.map((item, index) => buildHighlightCard(item, index, config)).join("");
   return packedHeight;
 }
 
@@ -392,27 +433,73 @@ function publishPacmanBoard(layoutItems, packedHeight) {
     cols: layoutItems.cols,
     rows: layoutItems.rows,
     width: layoutItems.cols * layoutItems.dotSize,
-    height: packedHeight
+    height: packedHeight,
   };
 
   window.pacmanBoard = board;
   window.dispatchEvent(
     new CustomEvent("pacman-board-ready", {
-      detail: board
+      detail: board,
     })
   );
 }
+function renderMobileSlider(items, grid) {
+  // Normalize so we get the correct imageSrc path
+  const normalizedItems = items
+    .filter((item) => item?.image)
+    .map((item, index) => normalizeHighlightItem(item, index));
 
+  // Duplicate the list so the CSS translateX(-50%) marquee loops seamlessly
+  const doubled = [...normalizedItems, ...normalizedItems];
+
+  const cardHtml = (item) => `
+    <article class="highlight-card ${item.orientation === "portrait" ? "is-portrait" : "is-landscape"}" aria-hidden="false">
+      <div class="highlight-card-media">
+        <img
+          src="${item.imageSrc}"
+          alt="${escapeHtml(item.alt)}"
+          loading="lazy"
+          decoding="async"
+          width="${item.width}"
+          height="${item.height}"
+        />
+      </div>
+    </article>
+  `;
+
+  // Wrap in .slider-track so the TRACK animates (width:max-content),
+  // while the grid itself stays as the fixed overflow:hidden viewport.
+  // translateX(-50%) of max-content = exactly one full set of cards,
+  // not -50% of 100vw which caused the visible jump/reset.
+  const track = document.createElement("div");
+  track.className = "slider-track";
+  track.innerHTML = doubled.map(cardHtml).join("");
+
+  // Speed: ~6 seconds per card
+  const durationSec = Math.max(20, normalizedItems.length * 6);
+  track.style.animationDuration = `${durationSec}s`;
+
+  grid.innerHTML = "";
+  grid.appendChild(track);
+
+  // Let CSS know this is the marquee row
+  grid.classList.add("mobile-slider-active");
+}
 function runHighlightsLayout(data, config = HIGHLIGHTS_LAYOUT) {
   const grid = document.getElementById("highlights-grid");
   if (!grid) return;
 
-  const sectionEl = document.querySelector(".home-highlights");
-
   const items = getHighlightsItems(data);
   const selectedItems = selectHighlightItems(items, config);
-  
-  const container = sectionEl.querySelector('.container');
+
+  // SHORT-CIRCUIT: If mobile, stop the skyline math
+  if (window.innerWidth < 768) {
+    renderMobileSlider(items, grid);
+    return;
+  }
+
+  const sectionEl = document.querySelector(".home-highlights");
+  const container = sectionEl.querySelector(".container");
   const containerWidth = Math.max(0, Math.floor(container.clientWidth));
 
   if (!containerWidth || !selectedItems.length) {
@@ -425,7 +512,7 @@ function runHighlightsLayout(data, config = HIGHLIGHTS_LAYOUT) {
   const packedHeight = renderHighlightCards(packed, grid, config);
 
   grid.style.width = `${packed.cols * packed.dotSize}px`;
-  grid.style.margin = '0 auto';
+  grid.style.margin = "0 auto";
 
   publishPacmanBoard(packed, packedHeight);
 
@@ -435,12 +522,17 @@ function runHighlightsLayout(data, config = HIGHLIGHTS_LAYOUT) {
   }
 
   if (config.debug) {
-    const portraitCount = packed.filter((item) => item.orientation === "portrait").length;
+    const portraitCount = packed.filter(
+      (item) => item.orientation === "portrait"
+    ).length;
     const emptyRatio = estimateEmptySpace(packed, containerWidth, packedHeight);
     console.log("[highlights] selected card count:", packed.length);
     console.log("[highlights] portrait count:", portraitCount);
     console.log("[highlights] final container height:", packedHeight);
-    console.log("[highlights] empty-space estimate:", `${(emptyRatio * 100).toFixed(2)}%`);
+    console.log(
+      "[highlights] empty-space estimate:",
+      `${(emptyRatio * 100).toFixed(2)}%`
+    );
   }
 }
 
@@ -469,13 +561,13 @@ function triggerLiveSnapshotDownload(grownItems) {
     featured: item.featured,
     width: item.width,
     height: item.height,
-    orientation: item.orientation
+    orientation: item.orientation,
   }));
 
   const payload = {
     sectionTitle: titleEl ? titleEl.textContent.trim() : "Highlights",
     sectionSubtitle: subtitleEl ? subtitleEl.textContent.trim() : "",
-    items: cleanItems
+    items: cleanItems,
   };
 
   const jsonString = JSON.stringify(payload, null, 2);
@@ -492,7 +584,7 @@ function triggerLiveSnapshotDownload(grownItems) {
 
   document.body.removeChild(link);
   URL.revokeObjectURL(downloadUrl);
-  
+
   console.log(`[Snapshot Log] Triggered download for: ${filename}`);
   localStorage.setItem("live_json_counter", currentCounter + 1);
 }
@@ -504,6 +596,7 @@ export async function initHighlights() {
   try {
     highlightsCachedData = await fetchHighlightsData();
     runHighlightsLayout(highlightsCachedData, HIGHLIGHTS_LAYOUT);
+
     window.removeEventListener("resize", rerunHighlightsLayout);
     window.addEventListener("resize", rerunHighlightsLayout, { passive: true });
   } catch (error) {

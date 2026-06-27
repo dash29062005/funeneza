@@ -88,25 +88,42 @@
 
 /* =========================================================
    7. HERO ARROWS
-   Full-height previous / next click zones
-   Hidden visually until hover on desktop
+   Invisible, full-height touch targets
    ========================================================= */
 
 .hero-arrow {
   position: absolute;
   top: 0;
-  z-index: 2; /* Keeps them right above the image track layer */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 10%; /* Reduced from 15% to keep click zones closer to edges, leaving more room for swiping */
-  height: 100%;
-  border: none;
-  background: transparent;
-  color: rgba(255, 255, 255, 0);
-  font-size: 3rem;
+  bottom: 0;
+  z-index: 2;
+  
+  /* Reset everything to ensure no visual shadow or highlight */
+  background: transparent !important;
+  color: transparent !important;
+  border: none !important;
+  box-shadow: none !important; /* This is likely what is causing the shadow */
+  outline: none !important;
+  
+  /* Reset spacing and appearance */
+  margin: 0;
+  padding: 0;
+  
+  /* Hit area */
+  width: 35%; 
+  min-width: 80px; 
   cursor: pointer;
-  transition: color 0.25s ease, background 0.25s ease;
+  
+  /* Remove any animation transitions */
+  transition: none !important;
+}
+
+/* Ensure no hover/active states trigger visual styles */
+.hero-arrow:hover, 
+.hero-arrow:active, 
+.hero-arrow:focus {
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 .hero-arrow--prev {
   left: 0;
@@ -116,11 +133,12 @@
   right: 0;
 }
 
+/* Ensure no visual hover feedback */
 .hero-arrow:hover {
-  color: rgba(255, 255, 255, 0.85);
-  background: rgba(0, 0, 0, 0.18);
+  background: transparent;
+  color: transparent;
+  
 }
-
 
 /* =========================================================
    8. HERO DOTS

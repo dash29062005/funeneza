@@ -28,7 +28,7 @@
   align-items: start;
 }
 
-.footer-links li[data-status="draft"] {
+.footer-links  li[data-status="draft"] {
   display: none;
 }
 
@@ -172,6 +172,9 @@
   transition: transform 0.2s ease;
 }
 
+.footer-socials a[data-status="draft"] {
+  display: none;
+}
 .footer-socials img {
   width: 30px;
   height: 30px;

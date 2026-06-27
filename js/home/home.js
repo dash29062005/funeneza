@@ -8,7 +8,7 @@
    ========================================================= */
 
 import { initNavbar } from "../navbar.js";
-import { initHero, initHeroResizeHandler } from "./home-hero.js";
+import { initHero} from "./home-hero.js";
 import { initZones } from "./home-zones.js";
 import { initHighlights } from "./home-highlights.js";
 import "./pacman-animation.js";
@@ -20,7 +20,6 @@ import { initCelebrate } from "./home-celebrate.js";
 document.addEventListener("DOMContentLoaded", () => {
   // initNavbar is handled globally by main.js
   initHero();
-  initHeroResizeHandler();
   initZones();
   initHighlights();
   initCelebrate();
