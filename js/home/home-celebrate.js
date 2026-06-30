@@ -86,6 +86,7 @@ function buildCelebrateInquiryCards() {
 /* --- Form templates --- */
 function buildCelebrateForm(optionId) {
   let content = "";
+  const birthdayFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSc9o9VbCI_MxH37f4Tpi-hhx8W41RG8cSPu8AYtI4-dVbgQ8w/formResponse";
   
   if (optionId === "corporate") {
     content = `
@@ -94,42 +95,42 @@ function buildCelebrateForm(optionId) {
         <p>Tell us about your team size, preferred date and event goals.</p>
       </div>
 
-      <form class="celebrate-form" data-celebrate-form="corporate">
+      <form class="celebrate-form" action="#inquiry" method="POST" data-celebrate-form="corporate">
         <div class="celebrate-form__grid">
           <label>
             <span>Company Name</span>
-            <input type="text" name="companyName" placeholder="Enter company name" required>
+            <input type="text" name="entry." placeholder="Enter company name" required>
           </label>
 
           <label>
             <span>Contact Person</span>
-            <input type="text" name="contactPerson" placeholder="Enter full name" required>
+            <input type="text" name="entry." placeholder="Enter full name" required>
           </label>
 
           <label>
             <span>Work Email</span>
-            <input type="email" name="email" placeholder="name@company.com" required>
+            <input type="email" name="entry." placeholder="name@company.com" required>
           </label>
 
           <label>
             <span>Phone Number</span>
-            <input type="tel" name="phone" placeholder="Enter phone number" required>
+            <input type="tel" name="entry." placeholder="Enter phone number" required>
           </label>
 
           <label>
             <span>Team Size</span>
-            <input type="number" name="groupSize" placeholder="Approx. guests" min="1" required>
+            <input type="number" name="entry." placeholder="Approx. guests" min="1" required>
           </label>
 
           <label>
             <span>Preferred Date</span>
-            <input type="date" name="eventDate">
+            <input type="date" name="entry." required>
           </label>
         </div>
 
         <label class="celebrate-form__full">
           <span>Event Goals</span>
-          <textarea name="details" rows="4" placeholder="Team outing, rewards day, offsite, launch celebration..."></textarea>
+          <textarea name="entry." rows="4" placeholder="Team outing, rewards day, offsite, launch celebration..."></textarea>
         </label>
 
         <button type="submit" class="celebrate-form__submit">Send Inquiry</button>
@@ -142,42 +143,42 @@ function buildCelebrateForm(optionId) {
         <p>Share your group type, expected headcount and preferred experience.</p>
       </div>
 
-      <form class="celebrate-form" data-celebrate-form="picnics">
+      <form class="celebrate-form" action="#inquiry" method="POST" data-celebrate-form="picnics">
         <div class="celebrate-form__grid">
           <label>
             <span>Group Name</span>
-            <input type="text" name="groupName" placeholder="School, society, club, family..." required>
+            <input type="text" name="entry." placeholder="School, society, club, family..." required>
           </label>
 
           <label>
             <span>Contact Person</span>
-            <input type="text" name="contactPerson" placeholder="Enter full name" required>
+            <input type="text" name="entry." placeholder="Enter full name" required>
           </label>
 
           <label>
             <span>Email</span>
-            <input type="email" name="email" placeholder="Enter email address" required>
+            <input type="email" name="entry." placeholder="Enter email address" required>
           </label>
 
           <label>
             <span>Phone Number</span>
-            <input type="tel" name="phone" placeholder="Enter phone number" required>
+            <input type="tel" name="entry." placeholder="Enter phone number" required>
           </label>
 
           <label>
             <span>Group Size</span>
-            <input type="number" name="groupSize" placeholder="Approx. guests" min="1" required>
+            <input type="number" name="entry." placeholder="Approx. guests" min="1" required>
           </label>
 
           <label>
             <span>Preferred Date</span>
-            <input type="date" name="eventDate">
+            <input type="date" name="entry." required>
           </label>
         </div>
 
         <label class="celebrate-form__full">
           <span>Requirements</span>
-          <textarea name="details" rows="4" placeholder="Meals, games, transport, time slot, age group..."></textarea>
+          <textarea name="entry." rows="4" placeholder="Meals, games, transport, time slot, age group..."></textarea>
         </label>
 
         <button type="submit" class="celebrate-form__submit">Send Inquiry</button>
@@ -190,42 +191,42 @@ function buildCelebrateForm(optionId) {
         <p>Tell us a few details and our team will suggest the right celebration package.</p>
       </div>
 
-      <form class="celebrate-form" data-celebrate-form="birthday">
+      <form class="celebrate-form" action="${birthdayFormUrl}" method="POST" target="hidden_iframe" data-celebrate-form="birthday">
         <div class="celebrate-form__grid">
           <label>
             <span>Parent / Contact Name</span>
-            <input type="text" name="contactName" placeholder="Enter full name" required>
+            <input type="text" name="entry.1851609193" placeholder="Enter full name" required>
           </label>
 
           <label>
             <span>Phone Number</span>
-            <input type="tel" name="phone" placeholder="Enter phone number" required>
+            <input type="tel" name="entry.1438185698" placeholder="Enter phone number" required>
           </label>
 
           <label>
             <span>Email</span>
-            <input type="email" name="email" placeholder="Enter email address" required>
+            <input type="email" name="entry.1127298643" placeholder="Enter email address" required>
           </label>
 
           <label>
             <span>Child Age</span>
-            <input type="number" name="childAge" placeholder="Age" min="1" max="18">
+            <input type="number" name="entry.998792661" placeholder="Age" min="1" max="18">
           </label>
 
           <label>
             <span>Guest Count</span>
-            <input type="number" name="guestCount" placeholder="Approx. guests" min="1" required>
+            <input type="number" name="entry.12486315" placeholder="Approx. guests" min="1" required>
           </label>
 
           <label>
             <span>Preferred Date</span>
-            <input type="date" name="eventDate">
+            <input type="date" data-date-base="entry.238223715" required>
           </label>
         </div>
 
         <label class="celebrate-form__full">
           <span>Party Details</span>
-          <textarea name="details" rows="4" placeholder="Theme, food, activities, preferred time..."></textarea>
+          <textarea name="entry.457045701" rows="4" placeholder="Theme, food, activities, preferred time..."></textarea>
         </label>
 
         <button type="submit" class="celebrate-form__submit">Send Inquiry</button>
@@ -295,8 +296,40 @@ function initCelebrateEvents() {
       const form = event.target.closest(".celebrate-form");
       if (!form) return;
 
-      event.preventDefault();
+      const actionAttr = form.getAttribute("action");
 
+      // Prevent full page navigation/hash redirect if form is currently an unconfigured placeholder
+      if (actionAttr === "#inquiry") {
+        event.preventDefault();
+      }
+
+      // 1. Intercept the date field and split it for Google Forms (Only handles Birthday option right now)
+      const dateInput = form.querySelector('input[data-date-base]');
+      if (dateInput) {
+        const baseName = dateInput.dataset.dateBase; 
+        const dateVal = dateInput.value;             
+        
+        if (dateVal) {
+          const [year, month, day] = dateVal.split("-");
+          
+          const createHiddenField = (suffix, value) => {
+            let field = form.querySelector(`input[name="${baseName}_${suffix}"]`);
+            if (!field) {
+              field = document.createElement("input");
+              field.type = "hidden";
+              field.name = `${baseName}_${suffix}`;
+              form.appendChild(field);
+            }
+            field.value = value;
+          };
+
+          createHiddenField("year", year);
+          createHiddenField("month", month);
+          createHiddenField("day", day);
+        }
+      }
+
+      // 2. Handle visual UI success animation
       const submitButton = form.querySelector(".celebrate-form__submit");
       if (submitButton) {
         const originalText = submitButton.textContent;
@@ -319,6 +352,14 @@ function initCelebrateEvents() {
 
 /* --- Main init --- */
 export function initCelebrate() {
+  if (!document.getElementById("hidden_iframe")) {
+    const iframe = document.createElement("iframe");
+    iframe.name = "hidden_iframe";
+    iframe.id = "hidden_iframe";
+    iframe.style.display = "none";
+    document.body.appendChild(iframe);
+  }
+
   renderCelebrateSection();
   initCelebrateEvents();
 }
